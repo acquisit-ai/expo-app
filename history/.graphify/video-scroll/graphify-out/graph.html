@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>graphify - /Users/evan/Downloads/expo-app/.graphify/video-scroll/graphify-out/graph.html</title>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0f1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
+  #graph { flex: 1; }
+  #sidebar { width: 280px; background: #1a1a2e; border-left: 1px solid #2a2a4e; display: flex; flex-direction: column; overflow: hidden; }
+  #search-wrap { padding: 12px; border-bottom: 1px solid #2a2a4e; }
+  #search { width: 100%; background: #0f0f1a; border: 1px solid #3a3a5e; color: #e0e0e0; padding: 7px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+  #search:focus { border-color: #4E79A7; }
+  #search-results { max-height: 140px; overflow-y: auto; padding: 4px 12px; border-bottom: 1px solid #2a2a4e; display: none; }
+  .search-item { padding: 4px 6px; cursor: pointer; border-radius: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .search-item:hover { background: #2a2a4e; }
+  #info-panel { padding: 14px; border-bottom: 1px solid #2a2a4e; min-height: 140px; }
+  #info-panel h3 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  #info-content { font-size: 13px; color: #ccc; line-height: 1.6; }
+  #info-content .field { margin-bottom: 5px; }
+  #info-content .field b { color: #e0e0e0; }
+  #info-content .empty { color: #555; font-style: italic; }
+  .neighbor-link { display: block; padding: 2px 6px; margin: 2px 0; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid #333; }
+  .neighbor-link:hover { background: #2a2a4e; }
+  #neighbors-list { max-height: 160px; overflow-y: auto; margin-top: 4px; }
+  #legend-wrap { flex: 1; overflow-y: auto; padding: 12px; }
+  #legend-wrap h3 { font-size: 13px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; border-radius: 4px; font-size: 12px; }
+  .legend-item:hover { background: #2a2a4e; padding-left: 4px; }
+  .legend-item.dimmed { opacity: 0.35; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .legend-count { color: #666; font-size: 11px; }
+  #stats { padding: 10px 14px; border-top: 1px solid #2a2a4e; font-size: 11px; color: #555; }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+<div id="sidebar">
+  <div id="search-wrap">
+    <input id="search" type="text" placeholder="Search nodes..." autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+  <div id="info-panel">
+    <h3>Node Info</h3>
+    <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+  </div>
+  <div id="legend-wrap">
+    <h3>Communities</h3>
+    <div id="legend"></div>
+  </div>
+  <div id="stats">29 nodes &middot; 49 edges &middot; 6 communities</div>
+</div>
+<script>
+const RAW_NODES = [{"id": "video_scroll_utils_playerpool_ts", "label": "playerPool.ts", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "playerPool.ts", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 2}, {"id": "playerpool_playerpoolmanager", "label": "PlayerPoolManager", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 31.0, "font": {"size": 12, "color": "#ffffff"}, "title": "PlayerPoolManager", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 7}, {"id": "playerpool_playerpoolmanager_initialize", "label": ".initialize()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": ".initialize()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 1}, {"id": "playerpool_playerpoolmanager_acquireplayer", "label": ".acquirePlayer()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": ".acquirePlayer()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 2}, {"id": "playerpool_playerpoolmanager_releaseplayer", "label": ".releasePlayer()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": ".releasePlayer()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 1}, {"id": "playerpool_playerpoolmanager_getplayer", "label": ".getPlayer()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": ".getPlayer()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 2}, {"id": "playerpool_playerpoolmanager_destroy", "label": ".destroy()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": ".destroy()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 1}, {"id": "playerpool_playerpoolmanager_getstatus", "label": ".getStatus()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": ".getStatus()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 1}, {"id": "video_scroll_components_videoplayer_tsx", "label": "VideoPlayer.tsx", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "VideoPlayer.tsx", "community": 2, "community_name": "components expo video", "source_file": "../../video-scroll/components/VideoPlayer.tsx", "file_type": "code", "degree": 4}, {"id": "videoplayer_acquireplayerfrompool", "label": "acquirePlayerFromPool()", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 19.0, "font": {"size": 12, "color": "#ffffff"}, "title": "acquirePlayerFromPool()", "community": 0, "community_name": "PlayerPoolManager acquirePlayer", "source_file": "../../video-scroll/components/VideoPlayer.tsx", "file_type": "code", "degree": 3}, {"id": "video_scroll_components_statuspanel_tsx", "label": "StatusPanel.tsx", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "StatusPanel.tsx", "community": 2, "community_name": "components expo video", "source_file": "../../video-scroll/components/StatusPanel.tsx", "file_type": "code", "degree": 2}, {"id": "video_scroll_data_videos_ts", "label": "videos.ts", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 10.0, "font": {"size": 0, "color": "#ffffff"}, "title": "videos.ts", "community": 5, "community_name": "data", "source_file": "../../video-scroll/data/videos.ts", "file_type": "code", "degree": 0}, {"id": "video_scroll_pages_videofeedpage_tsx", "label": "VideoFeedPage.tsx", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "VideoFeedPage.tsx", "community": 2, "community_name": "components expo video", "source_file": "../../video-scroll/pages/VideoFeedPage.tsx", "file_type": "code", "degree": 2}, {"id": "video_scroll_reducers_videowindowreducer_ts", "label": "videoWindowReducer.ts", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": "videoWindowReducer.ts", "community": 4, "community_name": "reducers videoWindowReducer", "source_file": "../../video-scroll/reducers/videoWindowReducer.ts", "file_type": "code", "degree": 1}, {"id": "videowindowreducer_videowindowreducer", "label": "videoWindowReducer()", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": "videoWindowReducer()", "community": 4, "community_name": "reducers videoWindowReducer", "source_file": "../../video-scroll/reducers/videoWindowReducer.ts", "file_type": "code", "degree": 1}, {"id": "video-scroll/components/VideoPlayer.tsx", "label": "VideoPlayer.tsx", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 34.0, "font": {"size": 12, "color": "#ffffff"}, "title": "VideoPlayer.tsx", "community": 3, "community_name": "Player Pool Manager Video load", "source_file": "video-scroll/components/VideoPlayer.tsx", "file_type": "code", "degree": 8}, {"id": "video-scroll/components/StatusPanel.tsx", "label": "StatusPanel.tsx", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 25.0, "font": {"size": 12, "color": "#ffffff"}, "title": "StatusPanel.tsx", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "video-scroll/components/StatusPanel.tsx", "file_type": "code", "degree": 5}, {"id": "video-scroll/data/videos.ts", "label": "videos.ts", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "videos.ts", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "video-scroll/data/videos.ts", "file_type": "code", "degree": 6}, {"id": "video-scroll/pages/VideoFeedPage.tsx", "label": "VideoFeedPage.tsx", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "VideoFeedPage.tsx", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "video-scroll/pages/VideoFeedPage.tsx", "file_type": "code", "degree": 10}, {"id": "video-scroll/reducers/videoWindowReducer.ts", "label": "videoWindowReducer.ts", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "videoWindowReducer.ts", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "video-scroll/reducers/videoWindowReducer.ts", "file_type": "code", "degree": 4}, {"id": "video-scroll/utils/playerPool.ts", "label": "playerPool.ts", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "playerPool.ts", "community": 3, "community_name": "Player Pool Manager Video load", "source_file": "video-scroll/utils/playerPool.ts", "file_type": "code", "degree": 6}, {"id": "expo-video", "label": "expo-video", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 34.0, "font": {"size": 12, "color": "#ffffff"}, "title": "expo-video", "community": 2, "community_name": "components expo video", "source_file": "", "file_type": "document", "degree": 8}, {"id": "expo", "label": "expo", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "expo", "community": 3, "community_name": "Player Pool Manager Video load", "source_file": "", "file_type": "document", "degree": 2}, {"id": "react-native", "label": "react-native", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "react-native", "community": 2, "community_name": "components expo video", "source_file": "", "file_type": "document", "degree": 4}, {"id": "Player Pool Manager", "label": "Player Pool Manager", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Player Pool Manager", "community": 3, "community_name": "Player Pool Manager Video load", "source_file": "", "file_type": "document", "degree": 2}, {"id": "Sliding window feed", "label": "Sliding window feed", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Sliding window feed", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "", "file_type": "document", "degree": 4}, {"id": "Video load status tracking", "label": "Video load status tracking", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 19.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Video load status tracking", "community": 3, "community_name": "Player Pool Manager Video load", "source_file": "", "file_type": "document", "degree": 3}, {"id": "ScrollView paging video feed", "label": "ScrollView paging video feed", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 13.0, "font": {"size": 0, "color": "#ffffff"}, "title": "ScrollView paging video feed", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "", "file_type": "document", "degree": 1}, {"id": "MetaId-based video identity", "label": "MetaId-based video identity", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 25.0, "font": {"size": 12, "color": "#ffffff"}, "title": "MetaId-based video identity", "community": 1, "community_name": "MetaId based video identity ScrollView", "source_file": "", "file_type": "document", "degree": 5}];
+const RAW_EDGES = [{"from": "video_scroll_utils_playerpool_ts", "to": "expo-video", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_utils_playerpool_ts", "to": "playerpool_playerpoolmanager", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager", "to": "playerpool_playerpoolmanager_initialize", "label": "method", "title": "method [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager", "to": "playerpool_playerpoolmanager_acquireplayer", "label": "method", "title": "method [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager", "to": "playerpool_playerpoolmanager_releaseplayer", "label": "method", "title": "method [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager", "to": "playerpool_playerpoolmanager_getplayer", "label": "method", "title": "method [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager", "to": "playerpool_playerpoolmanager_destroy", "label": "method", "title": "method [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager", "to": "playerpool_playerpoolmanager_getstatus", "label": "method", "title": "method [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "playerpool_playerpoolmanager_acquireplayer", "to": "videoplayer_acquireplayerfrompool", "label": "calls", "title": "calls [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "playerpool_playerpoolmanager_getplayer", "to": "videoplayer_acquireplayerfrompool", "label": "calls", "title": "calls [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "video_scroll_components_videoplayer_tsx", "to": "react-native", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_components_videoplayer_tsx", "to": "expo-video", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_components_videoplayer_tsx", "to": "expo", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_components_videoplayer_tsx", "to": "videoplayer_acquireplayerfrompool", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_components_statuspanel_tsx", "to": "react-native", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_components_statuspanel_tsx", "to": "expo-video", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_pages_videofeedpage_tsx", "to": "react-native", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_pages_videofeedpage_tsx", "to": "expo-video", "label": "imports_from", "title": "imports_from [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video_scroll_reducers_videowindowreducer_ts", "to": "videowindowreducer_videowindowreducer", "label": "contains", "title": "contains [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "expo-video", "label": "uses_video_view", "title": "uses_video_view [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "expo", "label": "uses_event_listener", "title": "uses_event_listener [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "video-scroll/data/videos.ts", "label": "uses_video_item_type", "title": "uses_video_item_type [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "video-scroll/utils/playerPool.ts", "label": "uses_player_pool", "title": "uses_player_pool [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "Player Pool Manager", "label": "implements_player_acquisition", "title": "implements_player_acquisition [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "Video load status tracking", "label": "tracks_loading_and_status", "title": "tracks_loading_and_status [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "MetaId-based video identity", "label": "keys_by_metaId", "title": "keys_by_metaId [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/VideoPlayer.tsx", "to": "video-scroll/pages/VideoFeedPage.tsx", "label": "renders", "title": "renders [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/StatusPanel.tsx", "to": "expo-video", "label": "uses_video_player_status_type", "title": "uses_video_player_status_type [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/StatusPanel.tsx", "to": "video-scroll/data/videos.ts", "label": "uses_video_item_type", "title": "uses_video_item_type [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/StatusPanel.tsx", "to": "Video load status tracking", "label": "displays_status", "title": "displays_status [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/StatusPanel.tsx", "to": "Sliding window feed", "label": "displays_window_state", "title": "displays_window_state [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/components/StatusPanel.tsx", "to": "video-scroll/pages/VideoFeedPage.tsx", "label": "renders", "title": "renders [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/data/videos.ts", "to": "MetaId-based video identity", "label": "defines", "title": "defines [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/data/videos.ts", "to": "Sliding window feed", "label": "provides_source_dataset", "title": "provides_source_dataset [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/data/videos.ts", "to": "video-scroll/pages/VideoFeedPage.tsx", "label": "uses_video_dataset", "title": "uses_video_dataset [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/data/videos.ts", "to": "video-scroll/reducers/videoWindowReducer.ts", "label": "uses_video_item_type", "title": "uses_video_item_type [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "react-native", "label": "uses_scrollview_and_dimensions", "title": "uses_scrollview_and_dimensions [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "expo-video", "label": "uses_video_player_status_and_type", "title": "uses_video_player_status_and_type [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "video-scroll/reducers/videoWindowReducer.ts", "label": "uses_window_reducer", "title": "uses_window_reducer [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "video-scroll/utils/playerPool.ts", "label": "uses_player_pool", "title": "uses_player_pool [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "Sliding window feed", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "ScrollView paging video feed", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/pages/VideoFeedPage.tsx", "to": "MetaId-based video identity", "label": "tracks_current_video_by_id", "title": "tracks_current_video_by_id [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/reducers/videoWindowReducer.ts", "to": "Sliding window feed", "label": "implements_window_management", "title": "implements_window_management [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/reducers/videoWindowReducer.ts", "to": "MetaId-based video identity", "label": "maintains_video_order_by_source_index", "title": "maintains_video_order_by_source_index [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "video-scroll/utils/playerPool.ts", "to": "expo-video", "label": "creates_and_manages_players", "title": "creates_and_manages_players [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/utils/playerPool.ts", "to": "Player Pool Manager", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/utils/playerPool.ts", "to": "Video load status tracking", "label": "supports_ready_state_waiting", "title": "supports_ready_state_waiting [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "video-scroll/utils/playerPool.ts", "to": "MetaId-based video identity", "label": "keys_players_by_video_id", "title": "keys_players_by_video_id [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}];
+const LEGEND = [{"cid": 0, "color": "#4E79A7", "label": "PlayerPoolManager acquirePlayer", "count": 9}, {"cid": 1, "color": "#F28E2B", "label": "MetaId based video identity ScrollView", "count": 7}, {"cid": 2, "color": "#E15759", "label": "components expo video", "count": 5}, {"cid": 3, "color": "#76B7B2", "label": "Player Pool Manager Video load", "count": 5}, {"cid": 4, "color": "#59A14F", "label": "reducers videoWindowReducer", "count": 2}, {"cid": 5, "color": "#EDC948", "label": "data", "count": 1}];
+
+// HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Build vis datasets
+const nodesDS = new vis.DataSet(RAW_NODES.map(n => ({
+  id: n.id, label: n.label, color: n.color, size: n.size,
+  font: n.font, title: n.title,
+  _community: n.community, _community_name: n.community_name,
+  _source_file: n.source_file, _file_type: n.file_type, _degree: n.degree,
+})));
+
+const edgesDS = new vis.DataSet(RAW_EDGES.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  label: '',
+  title: e.title,
+  dashes: e.dashes,
+  width: e.width,
+  color: e.color,
+  arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+})));
+
+const container = document.getElementById('graph');
+const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
+  physics: {
+    enabled: true,
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -60,
+      centralGravity: 0.005,
+      springLength: 120,
+      springConstant: 0.08,
+      damping: 0.4,
+      avoidOverlap: 0.8,
+    },
+    stabilization: { iterations: 200, fit: true },
+  },
+  interaction: {
+    hover: true,
+    tooltipDelay: 100,
+    hideEdgesOnDrag: true,
+    navigationButtons: false,
+    keyboard: false,
+  },
+  nodes: { shape: 'dot', borderWidth: 1.5 },
+  edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
+});
+
+network.once('stabilizationIterationsDone', () => {
+  network.setOptions({ physics: { enabled: false } });
+});
+
+function showInfo(nodeId) {
+  const n = nodesDS.get(nodeId);
+  if (!n) return;
+  const neighborIds = network.getConnectedNodes(nodeId);
+  const neighborItems = neighborIds.map(nid => {
+    const nb = nodesDS.get(nid);
+    const color = nb ? nb.color.background : '#555';
+    return `<span class="neighbor-link" style="border-left-color:${esc(color)}" onclick="focusNode(${JSON.stringify(nid)})">${esc(nb ? nb.label : nid)}</span>`;
+  }).join('');
+  document.getElementById('info-content').innerHTML = `
+    <div class="field"><b>${esc(n.label)}</b></div>
+    <div class="field">Type: ${esc(n._file_type || 'unknown')}</div>
+    <div class="field">Community: ${esc(n._community_name)}</div>
+    <div class="field">Source: ${esc(n._source_file || '-')}</div>
+    <div class="field">Degree: ${n._degree}</div>
+    ${neighborIds.length ? `<div class="field" style="margin-top:8px;color:#aaa;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>` : ''}
+  `;
+}
+
+function focusNode(nodeId) {
+  network.focus(nodeId, { scale: 1.4, animation: true });
+  network.selectNodes([nodeId]);
+  showInfo(nodeId);
+}
+
+// Track hovered node — hover detection is more reliable than click params
+let hoveredNodeId = null;
+network.on('hoverNode', params => {
+  hoveredNodeId = params.node;
+  container.style.cursor = 'pointer';
+});
+network.on('blurNode', () => {
+  hoveredNodeId = null;
+  container.style.cursor = 'default';
+});
+container.addEventListener('click', () => {
+  if (hoveredNodeId !== null) {
+    showInfo(hoveredNodeId);
+    network.selectNodes([hoveredNodeId]);
+  }
+});
+network.on('click', params => {
+  if (params.nodes.length > 0) {
+    showInfo(params.nodes[0]);
+  } else if (hoveredNodeId === null) {
+    document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>';
+  }
+});
+
+const searchInput = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  searchResults.innerHTML = '';
+  if (!q) { searchResults.style.display = 'none'; return; }
+  const matches = RAW_NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0, 20);
+  if (!matches.length) { searchResults.style.display = 'none'; return; }
+  searchResults.style.display = 'block';
+  matches.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'search-item';
+    el.textContent = n.label;
+    el.style.borderLeft = `3px solid ${n.color.background}`;
+    el.style.paddingLeft = '8px';
+    el.onclick = () => {
+      network.focus(n.id, { scale: 1.5, animation: true });
+      network.selectNodes([n.id]);
+      showInfo(n.id);
+      searchResults.style.display = 'none';
+      searchInput.value = '';
+    };
+    searchResults.appendChild(el);
+  });
+});
+document.addEventListener('click', e => {
+  if (!searchResults.contains(e.target) && e.target !== searchInput)
+    searchResults.style.display = 'none';
+});
+
+const hiddenCommunities = new Set();
+const legendEl = document.getElementById('legend');
+LEGEND.forEach(c => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+    <span class="legend-label">${c.label}</span>
+    <span class="legend-count">${c.count}</span>`;
+  item.onclick = () => {
+    if (hiddenCommunities.has(c.cid)) {
+      hiddenCommunities.delete(c.cid);
+      item.classList.remove('dimmed');
+    } else {
+      hiddenCommunities.add(c.cid);
+      item.classList.add('dimmed');
+    }
+    const updates = RAW_NODES
+      .filter(n => n.community === c.cid)
+      .map(n => ({ id: n.id, hidden: hiddenCommunities.has(c.cid) }));
+    nodesDS.update(updates);
+  };
+  legendEl.appendChild(item);
+});
+</script>
+<script>
+// Render hyperedges as shaded regions
+const hyperedges = [{"id": "h1", "label": "video_scroll_surface", "nodes": ["video-scroll/components/VideoPlayer.tsx", "video-scroll/components/StatusPanel.tsx", "video-scroll/data/videos.ts", "video-scroll/pages/VideoFeedPage.tsx", "video-scroll/reducers/videoWindowReducer.ts", "video-scroll/utils/playerPool.ts"], "relation": "prototype_module", "confidence": "INFERRED", "confidence_score": 0.7, "source_file": ""}, {"id": "h2", "label": "feed_runtime_pipeline", "nodes": ["video-scroll/data/videos.ts", "video-scroll/utils/playerPool.ts", "video-scroll/reducers/videoWindowReducer.ts", "video-scroll/pages/VideoFeedPage.tsx", "video-scroll/components/VideoPlayer.tsx", "video-scroll/components/StatusPanel.tsx"], "relation": "pipeline", "confidence": "INFERRED", "confidence_score": 0.7, "source_file": ""}, {"id": "h3", "label": "player_pool_and_windowing", "nodes": ["video-scroll/utils/playerPool.ts", "video-scroll/reducers/videoWindowReducer.ts", "Player Pool Manager", "Sliding window feed", "MetaId-based video identity"], "relation": "runtime_pattern", "confidence": "INFERRED", "confidence_score": 0.7, "source_file": ""}];
+// afterDrawing passes ctx already transformed to network coordinate space.
+// Draw node positions raw — no manual pan/zoom/DPR math needed.
+network.on('afterDrawing', function(ctx) {
+    hyperedges.forEach(h => {
+        const positions = h.nodes
+            .map(nid => network.getPositions([nid])[nid])
+            .filter(p => p !== undefined);
+        if (positions.length < 2) return;
+        ctx.save();
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = '#6366f1';
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Centroid and expanded hull in network coordinates
+        const cx = positions.reduce((s, p) => s + p.x, 0) / positions.length;
+        const cy = positions.reduce((s, p) => s + p.y, 0) / positions.length;
+        const expanded = positions.map(p => ({
+            x: cx + (p.x - cx) * 1.15,
+            y: cy + (p.y - cy) * 1.15
+        }));
+        ctx.moveTo(expanded[0].x, expanded[0].y);
+        expanded.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 0.4;
+        ctx.stroke();
+        // Label
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = '#4f46e5';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(h.label, cx, cy - 5);
+        ctx.restore();
+    });
+});
+</script>
+</body>
+</html>

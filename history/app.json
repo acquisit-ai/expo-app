@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "my-word-app",
+    "slug": "my-word-app",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "scheme": "mywordapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cyberdingzhen.my-word-app",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ],
+        "AVPictureInPicturePlaybackRangeStart": 0,
+        "AVPictureInPicturePlaybackRangeEnd": 1
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.cyberdingzhen.mywordapp"
+    },
+    "plugins": [
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ]
+    ]
+  }
+}

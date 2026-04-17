@@ -1,0 +1,1 @@
+export { SavedFeedScreen } from './SavedFeedScreen';
