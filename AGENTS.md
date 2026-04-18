@@ -1,4 +1,6 @@
-# My Word App - Claude Code AI 上下文文件 (claude-master)
+# My Word App
+
+主体文件全部移动到了 ./history/下, 包括 graphify 相关文件, 主要作为历史参考来重构
 
 ## graphify
 
