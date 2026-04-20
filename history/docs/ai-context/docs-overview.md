@@ -21,6 +21,7 @@
 
 - **[主上下文](/CLAUDE.md)** - *每个会话必需。* 编码标准、安全要求、MCP 服务器集成模式和开发协议
 - **[项目结构](/docs/ai-context/project-structure.md)** - *必读。* 完整技术栈、文件树和系统架构。必须附加到 Gemini 咨询
+- **[项目整体需求与应用概览](/docs/ai-context/项目整体需求与应用概览.md)** - *项目定位优先入口。* 用通用框架拆解产品需求、App 形态和技术栈，适合作为重构项目总览模板或首次接手时先读
 - **[Session同步分析](/docs/ai-context/session-sync-analysis.md)** - *认证架构参考。* 完整的Supabase事件到UserStore同步映射，认证状态变化流程和数据一致性保障机制
 - **[系统集成](/docs/ai-context/system-integration.md)** - *跨组件工作用。* 通信模式、数据流、测试策略和性能优化
 - **[部署基础设施](/docs/ai-context/deployment-infrastructure.md)** - *基础设施模式。* 容器化、监控、CI/CD 工作流和扩展策略
